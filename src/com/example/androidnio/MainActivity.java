@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 
-import com.alibaba.fastjson.JSON;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.AsyncSocket;
 import com.koushikdutta.async.ByteBufferList;
@@ -61,9 +60,7 @@ public class MainActivity extends Activity {
 											public void run() {
 												if (isClose)
 													return;
-												byte[]
-												bytes = JSON.toJSONString(new
-														HeartBeat()).getBytes();
+												byte[] bytes = new HeartBeat().toJsonString().getBytes();
 												mSocket.write(ByteBuffer.wrap(bytes));
 												mSocket.getServer().postDelayed(this, 100);
 											}

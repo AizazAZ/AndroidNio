@@ -2,8 +2,8 @@ package com.example.androidnio;
 
 import java.nio.ByteBuffer;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import org.json.JSONObject;
+
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.AsyncSocket;
 import com.koushikdutta.async.ByteBufferList;
@@ -15,7 +15,6 @@ import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.callback.WritableCallback;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.async.future.SimpleFuture;
-import com.koushikdutta.async.parser.StringParser;
 
 public class CShareRequest implements CompletedCallback, com.koushikdutta.async.callback.DataCallback {
 	private AsyncSocket mSocket;
@@ -64,9 +63,10 @@ public class CShareRequest implements CompletedCallback, com.koushikdutta.async.
 		public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
 			try {
 				String readString = bb.readString();
-				JSONObject parseObject = JSON.parseObject(readString);
-				Integer integer = parseObject.getInteger("type");
-				switch (integer.intValue()) {
+				JSONObject parseObject = new JSONObject(readString);
+				int type = parseObject.optInt("type", 0);
+
+				switch (type) {
 				case 1:// 心跳
 					System.out.println("====================心跳==================");
 					setAlive();
@@ -130,7 +130,7 @@ public class CShareRequest implements CompletedCallback, com.koushikdutta.async.
 	ByteBufferList mPendingData = new ByteBufferList();
 
 	private boolean handlePendingData(DataEmitter emitter) {
-		System.out.println("handle peding :"+mPendingData.remaining());
+		System.out.println("handle peding :" + mPendingData.remaining());
 		if (mPendingReadLength > mPendingData.remaining())
 			return false;
 		System.out.println("complete==============");
